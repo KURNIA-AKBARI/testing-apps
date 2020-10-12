@@ -1,0 +1,118 @@
+//::DEFINE
+def service_name        = "nginx-wayae"
+
+
+//::URL
+def repo_url            = "https://github.com/KURNIA-AKBARI/testing-apps/${service_name}.git"
+def docker_url          = "https://hub.docker.com/"
+def docker_credentials  = "kurnia_akbari"
+def artifact_url        = "https://hub.docker.com/repository/docker/kurniaakbarialdianza/testerapps"
+
+
+//::NOTIFICATIONS
+//def telegram_url        = "https://api.telegram.org/bot702898762:AAGrLYF_keCzywv9nLMAwoxaOedXrH1ZdoE/sendMessage"
+//def telegram_chatid     = "-457152037"
+def job_success         = "SUCCESS"
+def job_error           = "ERROR" 
+
+// ::INITIALIZATION
+def fullname            = "${service_name}-${env.BUILD_NUMBER}"
+def version, runPipeline
+
+
+// ::POD-TEMPLATE
+podTemplate(
+    label: fullname,
+    containers: [
+        containerTemplate(name: 'docker', image: 'docker.io/docker', command: 'cat', ttyEnabled: true),
+		containerTemplate(name: 'curl', image: 'centos', command: 'cat', ttyEnabled: true)
+	],
+	volumes: [
+        hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
+    ]) {
+
+    node(fullname) {
+        try {
+            // ::CHECKOUT
+            stage("Checkout") {
+                // ::TRIGGER
+                if (env.GET_TRIGGER == 'staging') {
+                    runPipeline = 'staging'
+                    runBranch   = '*/master'
+                } else if (env.GET_TRIGGER == 'production') {
+                    runPipeline = 'production'
+                    runBranch   = "*/tags/release-*"
+                } else {
+                    runPipeline = 'dev'
+                    runBranch   = "*/${env.BRANCH_NAME}"
+                } 
+            	echo "With branch ${env.BRANCH_NAME}"
+                // ::SOURCE CHECKOUT
+                def scm = checkout([$class: 'GitSCM', branches: [[name: runBranch]], userRemoteConfigs: [[credentialsId: 'bastianabay', url: repo_url]]])
+                echo "Before selection with branch ${scm.GIT_BRANCH}"
+
+                // ::VERSIONING
+                if (runPipeline == 'dev' && scm.GIT_BRANCH == 'origin/dev') {
+                    echo "Running Dev Pipeline with ${scm.GIT_BRANCH} branch"
+                    version     = "alpha"
+                    helm_dir    = "test"
+                } else if (runPipeline == 'staging') {
+                    echo "Running Staging Pipeline with ${scm.GIT_BRANCH} branch"
+                    version     = "beta"
+                    helm_dir    = "incubator"
+                } else if (runPipeline == 'production') {
+                    echo "Running Production Pipeline with tag ${scm.GIT_BRANCH}"
+                    version     = "release"
+                    helm_dir    = "stable"
+                } else {
+                    echo "Running Dev Pipeline with ${scm.GIT_BRANCH} branch"
+                    version     = "debug"
+                    helm_dir    = "test"
+                }
+            }
+                	
+            // ::DEV-STAGING
+            if (version != "release") {
+               stage("Unit Test") { 
+                    echo "STAGE DISABLED"
+                    // def golang = tool name: 'golang', type: 'go'
+                    // withEnv(["GOROOT=${golang}", "PATH+GO=${golang}/bin"]) {                        
+                    //     goEnv(lib_url: lib_url, lib_url_auth: lib_url_auth)
+                    //     try {
+                    //         unitTest()
+                    //     } catch (e) {
+                    //         echo "${e}"
+                    //     }
+
+                    //     def unitTestGetValue = sh(returnStdout: true, script: 'go tool cover -func=coverage.out | grep total | sed "s/[[:blank:]]*$//;s/.*[[:blank:]]//"')
+                    //     unitTest_score = "Your score is ${unitTestGetValue}"
+                    //     echo "${unitTest_score}"
+                    //     if (unitTestGetValue >= unitTest_standard){
+                    //         echo "Unit Test fulfill standar value with score ${unitTestGetValue}/${unitTest_standard}"
+                    //     } else {
+                    //         currentBuild.result = 'ABORTED'
+                    //         error("Sorry your unit test score not fulfill standard score ${unitTestGetValue}/${unitTest_standard}")
+                    //     }
+                    // }
+                }
+            	stage("Code Review") {
+                    echo "STAGE DISABLED"
+                    // echo "Running Code Review with SonarQube"
+                    // def scannerHome = tool "sonarscanner"
+                    // withSonarQubeEnv ("sonarserver") {
+                    //     sonarScanGo(scannerHome: scannerHome, project_name: "${version}-${fullname}", service_name: service_name, project_version: "${version}")
+                    // }
+                    // timeout(time: 10, unit: 'MINUTES') {
+                    //     waitForQualityGate abortPipeline: true
+                    // }
+                }
+                  // ::NONPROD-PIPELINE
+                if (version == 'alpha' || version == 'beta') {
+                    if (version == 'alpha') {
+
+                        stage("Dev Branch?"){
+                            echo "Yes, it's dev branch. Continue to Dev Pipeline"
+                        }
+
+                    } 
+                    
