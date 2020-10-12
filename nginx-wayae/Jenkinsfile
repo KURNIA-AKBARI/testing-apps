@@ -26,7 +26,7 @@ node {
 		dir ('nginx-wayae'){
                 script {
 //	    docker.withRegistry('hub.docker.com', 'dockeruser') {
-                    sh "docker push kurniaakbarialdianza/testerapps:alpha"     
+                    sh "docker push hub.docker.com/docker/kurniaakbarialdianza/testerapps:alpha"     
 //		    }
 		}
 		}
