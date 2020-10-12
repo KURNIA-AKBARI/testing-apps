@@ -4,7 +4,7 @@
 #
 
 # Pull base image.
-FROM centos
+FROM alpine:latest as os
 
 # Install Nginx.
 RUN \
