@@ -17,7 +17,7 @@ node {
                 script {
           sh "docker -v"
                     sh "pwd"
-          sh "docker build --network host -t kurniaakbarialdianza/testerapps:alpha ."                    
+          sh "docker build --network host -t registry.hub.docker.com/kurniaakbarialdianza/testerapps:alpha ."                    
         	}
       	}
     }
@@ -25,8 +25,8 @@ node {
 		     stage = 'Push Registry'
 		dir ('nginx-wayae'){
                 script {
-	    docker.withRegistry('https://hub.docker.com/repository/docker/kurniaakbarialdianza/testerapps', 'dockeruser') {
-                    sh "docker push kurniaakbarialdianza/testerapps:alpha"     
+	    docker.withRegistry('registry.hub.docker.com/kurniaakbarialdianza/testerapps', 'dockeruser') {
+                    sh "docker push registry.hub.docker.com/kurniaakbarialdianza/testerapps:alpha"     
 		    }
 		}
 		}
