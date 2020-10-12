@@ -12,7 +12,7 @@ node {
             
         }
         stage('Create Docker Containers') {
-            stage = 'Create Docker Containers & Pushing'
+            stage = 'Create Docker Containers'
 		dir ('nginx-wayae'){
                 script {
           sh "docker -v"
@@ -22,7 +22,7 @@ node {
       	}
     }
 	     stage('Push Registry') {
-		     stage = 'Create Docker Containers & Pushing'
+		     stage = 'Push Registry'
 		dir ('nginx-wayae'){
                 script {
 	    docker.withRegistry('https://hub.docker.com/u/kurniaakbarialdianza', 'Docker.Hub') {
