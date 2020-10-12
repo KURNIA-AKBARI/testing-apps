@@ -17,7 +17,7 @@ node {
                 script {
           sh "docker -v"
                     sh "pwd"
-          sh "docker build --network host -t https://hub.docker.com/repository/docker/kurniaakbarialdianza/testerapps:alpha ."
+          sh "docker build --network host -t hub.docker.com/repository/docker/kurniaakbarialdianza/testerapps:alpha ."
                     docker.withRegistry('https://hub.docker.com/u/kurniaakbarialdianza', 'Docker.Hub') {
                     sh "docker push kurniaakbarialdianza/testerapps:alpha"
           }
