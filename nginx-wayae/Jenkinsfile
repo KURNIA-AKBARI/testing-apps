@@ -22,17 +22,25 @@ node {
       	}
     }
 	     stage('Push Registry') {
+		     stage = 'Create Docker Containers & Pushing'
+		dir ('nginx-wayae'){
+                script {
 	    docker.withRegistry('https://hub.docker.com/u/kurniaakbarialdianza', 'Docker.Hub') {
                     sh "docker push kurniaakbarialdianza/testerapps:alpha"     
-		    }	
+		    }
+		}
+		}
+	     }
     stage ('Deploy to Kubernetes'){
             stage = 'Deploy to Kubernetes'
+	    dir ('nginx-wayae'){
             script {
         withKubeConfig(credentialsId: 'cluster_w', serverUrl: 'https://192.168.100.130:6443'){
           sh 'kubectl apply -f deployment-nginx.yaml'
                     sh 'kubectl apply -f service-nginx.yaml'
                     sh 'kubectl apply -f ingress-nginx.yaml'
                 }
+	    }
             }
     }
 				
