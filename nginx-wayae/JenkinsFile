@@ -34,12 +34,13 @@ node {
                 }
             }
     }
-                
-        stage ('Notification') {
-            stage = 'Notification'
-            sh "curl -s -X POST https://api.telegram.org/bot702898762:AAGrLYF_keCzywv9nLMAwoxaOedXrH1ZdoE/sendMessage -d chat_id=-45715203 -d text='Deployment ${env.JOB_NAME} Berhasil'"
-        }
-        
-        catch (e) {
-            sh "curl -s -X POST https://api.telegram.org/bot702898762:AAGrLYF_keCzywv9nLMAwoxaOedXrH1ZdoE/sendMessage -d chat_id=-45715203 -d text='Deployment ${env.JOB_NAME} Gagal Pada Stage ${stage}'"
+				
+		stage ('Notification') {
+			stage = 'Notification'
+			sh "curl -s -X POST https://api.telegram.org/bot702898762:AAGrLYF_keCzywv9nLMAwoxaOedXrH1ZdoE/sendMessage -d chat_id=-457152037 -d text='Deployment ${env.JOB_NAME} Berhasil'"
+		}
+	}
+		catch (e) {
+			sh "curl -s -X POST https://api.telegram.org/bot702898762:AAGrLYF_keCzywv9nLMAwoxaOedXrH1ZdoE/sendMessage -d chat_id=-457152037 -d text='Deployment ${env.JOB_NAME} Gagal Pada Stage ${stage}'"
+    	}
     }
