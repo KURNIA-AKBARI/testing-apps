@@ -13,14 +13,16 @@ node {
         }
         stage('Create Docker Containers & Pushing') {
             stage = 'Create Docker Containers & Pushing'
+		dir ('nginx-wayae'){
                 script {
           sh "docker -v"
                     sh "pwd"
           sh "docker build --network host -t hub.docker.com/repository/docker/kurniaakbarialdianza/testerapps:alpha ."
                     docker.withRegistry('https://hub.docker.com/u/kurniaakbarialdianza', 'Docker.Hub') {
-                    sh "docker push kurniaakbarialdianza/testerapps:alpha"         
-        }
-      }
+                    sh "docker push kurniaakbarialdianza/testerapps:alpha"     
+		    }	
+        	}
+      	}
     }
     stage ('Deploy to Kubernetes'){
             stage = 'Deploy to Kubernetes'
