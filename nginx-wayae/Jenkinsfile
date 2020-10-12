@@ -25,7 +25,7 @@ node {
 		     stage = 'Push Registry'
 		dir ('nginx-wayae'){
                 script {
-	    docker.withRegistry('https://hub.docker.com', 'Docker.Hub') {
+	    docker.withRegistry('hub.docker.com', 'Docker.Hub') {
                     sh "docker push kurniaakbarialdianza/testerapps:alpha"     
 		    }
 		}
